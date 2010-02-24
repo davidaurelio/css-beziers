@@ -129,12 +129,12 @@ CubicBezier.prototype.divideAt(t) = function(t){
         right = {},
         points = this._getAuxPoints(t);
 
-    var i0 = points. i0,
-        i1 = points. i1,
-        i2 = points. i2,
-        j0 = points. j0,
-        j1 = points. j1,
-        k = points. k;
+    var i0 = points.i0,
+        i1 = points.i1,
+        i2 = points.i2,
+        j0 = points.j0,
+        j1 = points.j1,
+        k = points.k;
 
     // Normalize derived points, so that the new curves starting/ending point
     // coordinates are (0, 0) respectively (1, 1)
@@ -153,6 +153,11 @@ CubicBezier.prototype.divideAt(t) = function(t){
     right.p1 = {
         x: (j1.x - k.x) * (1 - factorX),
         x: (j1.y - k.y) * (1 - factorY)
+    };
+
+    right.p2 = {
+        x: (i2.x - k.x) * (1 - factorX),
+        x: (i2.y - k.y) * (1 - factorY)
     };
 
     return [
