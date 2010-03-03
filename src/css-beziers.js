@@ -83,9 +83,10 @@ CubicBezier.prototype._getTForCoordinate = function(c, p1, p2, epsilon){
     }
 
     // Fall back to the bisection method for reliability.
-    t2 = x;
+    t2 = c;
     var t0 = 0,
-        t1 = 1;
+        t1 = 1,
+        c2;
 
     if (t2 < t0){
         return t0;
@@ -95,11 +96,11 @@ CubicBezier.prototype._getTForCoordinate = function(c, p1, p2, epsilon){
     }
 
     while (t0 < t1) {
-        x2 = this._getCoordinateForT(t2, p1, p2);
-        if (Math.abs(x2 - x) < epsilon){
+        c2 = this._getCoordinateForT(t2, p1, p2);
+        if (Math.abs(c2 - c) < epsilon){
             return t2;
         }
-        if (x > x2){
+        if (c > c2){
             t0 = t2;
         }
         else{
