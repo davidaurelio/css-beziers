@@ -6,16 +6,16 @@
  * This type of bezier curves can be used as CSS transform timing functions.
  */
 function CubicBezier(p1x, p1y, p2x, p2y){
-    if (!(p1x >= 0) || !(p1x <= 1)) {
+    if (!(p1x >= 0 && p1x <= 1)) {
         throw new RangeError("'p1x' must be a number between 0 and 1");
     }
-    if (!(p1y >= 0) || !(p1y <= 1)) {
+    if (!(p1y >= 0 && p1y <= 1)) {
         throw new RangeError("'p1y' must be a number between 0 and 1");
     }
-    if (!(p2x >= 0) || !(p2x <= 1)) {
+    if (!(p2x >= 0 && p2x <= 1)) {
         throw new RangeError("'p2x' must be a number between 0 and 1");
     }
-    if (!(p2y >= 0) || !(p2y <= 1)) {
+    if (!(p2y >= 0 && p2y <= 1)) {
         throw new RangeError("'p2y' must be a number between 0 and 1");
     }
 
@@ -34,6 +34,14 @@ function CubicBezier(p1x, p1y, p2x, p2y){
         y: 1 - this._c.y - this._b.y
     };
 }
+
+CubicBezier.prototype.getTforX = function(x){
+
+};
+
+CubicBezier.prototype.getTforY = function(y){
+
+};
 
 /**
  * Computes the point for a given t value.
