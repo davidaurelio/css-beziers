@@ -25,6 +25,7 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 /**
  * Represents a two-dimensional cubic bezier curve with the starting
  * point (0, 0) and the end point (1, 1). The two control points p1 and p2
@@ -49,25 +50,23 @@ function CubicBezier(p1x, p1y, p2x, p2y){
     // Control points
     this._p1 = { x: p1x, y: p1y };
     this._p2 = { x: p2x, y: p2y };
-
-    // Pre-calculating coefficients for point computation.
-    this._c = { x: 3*p1x, y: 3*p1y };
-    this._b = {
-        x: 3*(p2x - p1x) - this._c.x,
-        y: 3*(p2y - p1y) - this._c.y
-    };
-    this._a = {
-        x: 1 - this._c.x - this._b.x,
-        y: 1 - this._c.y - this._b.y
-    };
 }
 
-CubicBezier.prototype.getTforX = function(x){
+CubicBezier.prototype._getCoordinateForT = function(t, p1, p2){
+    var c = 3 * p1,
+        b = 3 * (p2 - p1) - c,
+        a = 1 - c - b;
 
+    return ((a * t + b) * t + c) * t;
 };
 
-CubicBezier.prototype.getTforY = function(y){
+CubicBezier.prototype._getCoordinateDerivateForT = function(t, p1, p2){
+    var c = 3 * p1,
+        b = 3 * (p2 - p1) - c,
+        a = 1 - c - b;
 
+    return (3 * a * t + 2 * b) * t + c;
+};
 };
 
 /**
@@ -79,19 +78,20 @@ CubicBezier.prototype.getTforY = function(y){
 CubicBezier.prototype.getPointForT = function(t) {
     // Special cases: starting and ending points
     if (t == 0 || t == 1) {
-        return { x: t, y: t }
+        return { x: t, y: t };
     }
     // check for correct t value (must be between 0 and 1)
     else if (!(t > 0) || !(t < 1)) {
         throw new RangeError("'t' must be a number between 0 and 1");
     }
 
-    var point = {
-        x: t*(3*this._a.x*t + 2*this._b.x) + this._c.x,
-        y: t*(3*this._a.y*t + 2*this._b.y) + this._c.y
-    };
+    return {
+        x: this._getCoordinateForT(t, this._p1.x, this._p2.x),
+        y: this._getCoordinateForT(t, this._p1.y, this._p2.y)
+    }
+};
 
-    return point;
+
 };
 
 /**
@@ -103,7 +103,7 @@ CubicBezier.prototype.getPointForT = function(t) {
  */
 CubicBezier.prototype._getAuxPoints = function(t){
     if (!(t > 0) || !(t < 1)) {
-        throw new RangeError("'t' must be a number between 0 and 1");
+        throw new RangeError("'t' must be greater than 0 and lower than 1");
     }
 
     // First series of auxiliary points
