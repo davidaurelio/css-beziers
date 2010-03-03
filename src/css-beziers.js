@@ -208,7 +208,7 @@ CubicBezier.prototype._getAuxPoints = function(t){
  * @returns {CubicBezier[]} Returns an array containing two bezier curves
  *     to the left and the right of t.
  */
-CubicBezier.prototype.divideAtT(t) = function(t){
+CubicBezier.prototype.divideAtT = function(t){
     var left = {},
         right = {},
         points = this._getAuxPoints(t);
