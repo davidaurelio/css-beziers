@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2008 Apple Inc.
- * Copyright (C) 2010 David Aurelio
- * Copyright (C) 2010 uxebu Consulting Ltd. & Co. KG
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 David Aurelio. All Rights Reserved.
+ * Copyright (C) 2010 uxebu Consulting Ltd. & Co. KG. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
