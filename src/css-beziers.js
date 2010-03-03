@@ -67,6 +67,49 @@ CubicBezier.prototype._getCoordinateDerivateForT = function(t, p1, p2){
 
     return (3 * a * t + 2 * b) * t + c;
 };
+
+CubicBezier.prototype._getTForCoordinate = function(c, p1, p2, epsilon){
+    // First try a few iterations of Newton's method -- normally very fast.
+    for (var t2 = c, i = 0, c2, d2; i < 8; i++) {
+        c2 = this._getCoordinateForT(t2, p1, p2) - c;
+        if (Math.abs(c2) < epsilon){
+            return t2;
+        }
+        d2 = this._getCoordinateDerivateForT(t2, p1, p2);
+        if (Math.abs(d2) < 1e-6){
+            break;
+        }
+        t2 = t2 - c2 / d2;
+    }
+
+    // Fall back to the bisection method for reliability.
+    t2 = x;
+    var t0 = 0,
+        t1 = 1;
+
+    if (t2 < t0){
+        return t0;
+    }
+    if (t2 > t1){
+        return t1;
+    }
+
+    while (t0 < t1) {
+        x2 = this._getCoordinateForT(t2, p1, p2);
+        if (Math.abs(x2 - x) < epsilon){
+            return t2;
+        }
+        if (x > x2){
+            t0 = t2;
+        }
+        else{
+            t1 = t2;
+        }
+        t2 = (t1 - t0) * .5 + t0;
+    }
+
+    // Failure.
+    return t2;
 };
 
 /**
@@ -91,7 +134,12 @@ CubicBezier.prototype.getPointForT = function(t) {
     }
 };
 
+CubicBezier.prototype.getTforX = function(x){
+    return this._getTForCoordinate(x, this._p1.x, this._p2.x);
+};
 
+CubicBezier.prototype.getTforY = function(y){
+    return this._getTForCoordinate(y, this._p1.y, this._p2.y);
 };
 
 /**
@@ -159,7 +207,7 @@ CubicBezier.prototype._getAuxPoints = function(t){
  * @returns {CubicBezier[]} Returns an array containing two bezier curves
  *     to the left and the right of t.
  */
-CubicBezier.prototype.divideAt(t) = function(t){
+CubicBezier.prototype.divideAtT(t) = function(t){
     var left = {},
         right = {},
         points = this._getAuxPoints(t);
@@ -199,4 +247,22 @@ CubicBezier.prototype.divideAt(t) = function(t){
         new CubicBezier(left.p1.x, left.p1.y, left.p2.x, left.p2.y),
         new CubicBezier(right.p1.x, right.p1.y, right.p2.x, right.p2.y),
     ];
+};
+
+CubicBezier.prototype.divideAtX = function(x) {
+    if (!(x > 0) || !(x < 1)) {
+        throw new RangeError("'x' must be greater than 0 and lower than 1");
+    }
+
+    var t = this.getTforX(x);
+    return this.divideAtT(t);
+};
+
+CubicBezier.prototype.divideAtY = function(y) {
+    if (!(y > 0) || !(y < 1)) {
+        throw new RangeError("'y' must be greater than 0 and lower than 1");
+    }
+
+    var t = this.getTforY(y);
+    return this.divideAtT(t);
 };
