@@ -267,3 +267,12 @@ CubicBezier.prototype.divideAtY = function(y) {
     var t = this.getTforY(y);
     return this.divideAtT(t);
 };
+
+CubicBezier.prototype.toString = function(){
+    return "cubic-bezier(" + [
+        this._p1.x,
+        this._p1.y,
+        this._p2.x,
+        this._p2.y
+    ].join(", ") + ")";
+};
