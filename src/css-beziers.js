@@ -278,6 +278,10 @@ CubicBezier.prototype.divideAtY = function(y, epsilon) {
     return this.divideAtT(t);
 };
 
+CubicBezier.prototype.clone = function() {
+    return new CubicBezier(this._p1.x, this._p1.y, this._p2.x, this._p2.y);
+};
+
 CubicBezier.prototype.toString = function(){
     return "cubic-bezier(" + [
         this._p1.x,
@@ -285,4 +289,24 @@ CubicBezier.prototype.toString = function(){
         this._p2.x,
         this._p2.y
     ].join(", ") + ")";
+};
+
+CubicBezier.linear = function(){
+    return new CubicBezier
+};
+
+CubicBezier.ease = function(){
+    return new CubicBezier(0.25, 0.1, 0.25, 1.0);
+};
+CubicBezier.linear = function(){
+    return new CubicBezier(0.0, 0.0, 1.0, 1.0);
+};
+CubicBezier.easeIn = function(){
+    return new CubicBezier(0.42, 0, 1.0, 1.0);
+};
+CubicBezier.easeOut = function(){
+    return new CubicBezier(0, 0, 0.58, 1.0);
+};
+CubicBezier.easeInOut = function(){
+    return new CubicBezier(0.42, 0, 0.58, 1.0);
 };
