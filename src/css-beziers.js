@@ -226,22 +226,22 @@ CubicBezier.prototype.divideAtT = function(t){
         factorY = k.y;
 
     left.p1 = {
-        x: i0.x * factorX,
-        y: i0.y * factorY
+        x: i0.x / factorX,
+        y: i0.y / factorY
     };
     left.p2 = {
-        x: j0.x * factorX,
-        y: j0.y * factorY
+        x: j0.x / factorX,
+        y: j0.y / factorY
     };
 
     right.p1 = {
-        x: (j1.x - k.x) * (1 - factorX),
-        x: (j1.y - k.y) * (1 - factorY)
+        x: (j1.x - factorX) / (1 - factorX),
+        x: (j1.y - factorY) / (1 - factorY)
     };
 
     right.p2 = {
-        x: (i2.x - k.x) * (1 - factorX),
-        x: (i2.y - k.y) * (1 - factorY)
+        x: (i2.x - factorX) / (1 - factorX),
+        x: (i2.y - factorY) / (1 - factorY)
     };
 
     return [
