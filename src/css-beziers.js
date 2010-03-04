@@ -73,6 +73,10 @@ CubicBezier.prototype._getCoordinateDerivateForT = function(t, p1, p2){
 };
 
 CubicBezier.prototype._getTForCoordinate = function(c, p1, p2, epsilon){
+    if (!isFinite(epsilon) || epsilon <= 0) {
+        throw new RangeError("'epsilon' must be a number greater than 0.");
+    }
+
     // First try a few iterations of Newton's method -- normally very fast.
     for (var t2 = c, i = 0, c2, d2; i < 8; i++) {
         c2 = this._getCoordinateForT(t2, p1, p2) - c;
@@ -139,12 +143,12 @@ CubicBezier.prototype.getPointForT = function(t) {
     }
 };
 
-CubicBezier.prototype.getTforX = function(x){
-    return this._getTForCoordinate(x, this._p1.x, this._p2.x);
+CubicBezier.prototype.getTforX = function(x, epsilon){
+    return this._getTForCoordinate(x, this._p1.x, this._p2.x, epsilon);
 };
 
-CubicBezier.prototype.getTforY = function(y){
-    return this._getTForCoordinate(y, this._p1.y, this._p2.y);
+CubicBezier.prototype.getTforY = function(y, epsilon){
+    return this._getTForCoordinate(y, this._p1.y, this._p2.y, epsilon);
 };
 
 /**
@@ -254,21 +258,23 @@ CubicBezier.prototype.divideAtT = function(t){
     ];
 };
 
-CubicBezier.prototype.divideAtX = function(x) {
-    if (!(x > 0) || !(x < 1)) {
-        throw new RangeError("'x' must be greater than 0 and lower than 1");
+CubicBezier.prototype.divideAtX = function(x, epsilon) {
+    if (x < 0 || x > 1) {
+        throw new RangeError("'x' must be a number between 0 and 1. "
+                             + "Got " + x + " instead.");
     }
 
-    var t = this.getTforX(x);
+    var t = this.getTforX(x, epsilon);
     return this.divideAtT(t);
 };
 
-CubicBezier.prototype.divideAtY = function(y) {
-    if (!(y > 0) || !(y < 1)) {
-        throw new RangeError("'y' must be greater than 0 and lower than 1");
+CubicBezier.prototype.divideAtY = function(y, epsilon) {
+    if (y < 0 || y > 1) {
+        throw new RangeError("'y' must be a number between 0 and 1. "
+                             + "Got " + y + " instead.");
     }
 
-    var t = this.getTforY(y);
+    var t = this.getTforY(y, epsilon);
     return this.divideAtT(t);
 };
 
