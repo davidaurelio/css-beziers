@@ -217,6 +217,20 @@ CubicBezier.prototype._getAuxPoints = function(t){
  *     to the left and the right of t.
  */
 CubicBezier.prototype.divideAtT = function(t){
+    if (t < 0 || t > 1) {
+        throw new RangeError("'t' must be a number between 0 and 1. "
+                             + "Got " + t + " instead.");
+    }
+
+    // Special cases t = 0, t = 1: Curve can be cloned for one side, the other
+    // side is a linear curve (with duration 0)
+    if (t === 0 || t === 1){
+        var curves = [];
+        curves[t] = CubicBezier.linear();
+        curves[1-t] = this.clone();
+        return curves;
+    }
+
     var left = {},
         right = {},
         points = this._getAuxPoints(t);
