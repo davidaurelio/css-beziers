@@ -35,16 +35,20 @@
  */
 function CubicBezier(p1x, p1y, p2x, p2y){
     if (!(p1x >= 0 && p1x <= 1)) {
-        throw new RangeError("'p1x' must be a number between 0 and 1");
+        throw new RangeError("'p1x' must be a number between 0 and 1. "
+                               + "Got " + p1x + "instead.");
     }
     if (!(p1y >= 0 && p1y <= 1)) {
-        throw new RangeError("'p1y' must be a number between 0 and 1");
+        throw new RangeError("'p1y' must be a number between 0 and 1. "
+                               + "Got " + p1y + "instead.");
     }
     if (!(p2x >= 0 && p2x <= 1)) {
-        throw new RangeError("'p2x' must be a number between 0 and 1");
+        throw new RangeError("'p2x' must be a number between 0 and 1. "
+                               + "Got " + p2x + "instead.");
     }
     if (!(p2y >= 0 && p2y <= 1)) {
-        throw new RangeError("'p2y' must be a number between 0 and 1");
+        throw new RangeError("'p2y' must be a number between 0 and 1. "
+                               + "Got " + p2y + "instead.");
     }
 
     // Control points
