@@ -1,4 +1,6 @@
-/*
+/**
+ * @license
+ *
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  * Copyright (C) 2010 David Aurelio. All Rights Reserved.
  * Copyright (C) 2010 uxebu Consulting Ltd. & Co. KG. All Rights Reserved.
@@ -134,7 +136,8 @@ CubicBezier.prototype.getPointForT = function(t) {
     }
     // check for correct t value (must be between 0 and 1)
     else if (!(t > 0) || !(t < 1)) {
-        throw new RangeError("'t' must be a number between 0 and 1");
+        throw new RangeError("'t' must be a number between 0 and 1"
+                             + "Got " + t + " instead.");
     }
 
     return {
@@ -268,7 +271,7 @@ CubicBezier.prototype.divideAtT = function(t){
 
     return [
         new CubicBezier(left.p1.x, left.p1.y, left.p2.x, left.p2.y),
-        new CubicBezier(right.p1.x, right.p1.y, right.p2.x, right.p2.y),
+        new CubicBezier(right.p1.x, right.p1.y, right.p2.x, right.p2.y)
     ];
 };
 
