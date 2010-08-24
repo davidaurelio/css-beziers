@@ -173,7 +173,7 @@ CubicBezier.prototype._getAuxPoints = function(t){
         },
         i1 = {
             x: this._p1.x + t*(this._p2.x - this._p1.x),
-            y: this._p1.y + t*(this._p2.x - this._p1.y)
+            y: this._p1.y + t*(this._p2.y - this._p1.y)
         },
         i2  = { // second control point of the right curve
             x: this._p2.x + t*(1 - this._p2.x),
