@@ -54,8 +54,10 @@ function CubicBezier(p1x, p1y, p2x, p2y) {
     }
 
     // Control points
-    this._p1 = { x: p1x, y: p1y };
-    this._p2 = { x: p2x, y: p2y };
+    this._p1x = p1x;
+    this._p1y = p1y;
+    this._p2x = p2x;
+    this._p2y = p2y;
 }
 
 CubicBezier.prototype._getCoordinateForT = function(t, p1, p2) {
@@ -95,8 +97,7 @@ CubicBezier.prototype._getTForCoordinate = function(c, p1, p2, epsilon) {
     // Fall back to the bisection method for reliability.
     t2 = c;
     var t0 = 0,
-        t1 = 1,
-        c2;
+        t1 = 1;
 
     if (t2 < t0) {
         return t0;
@@ -116,7 +117,7 @@ CubicBezier.prototype._getTForCoordinate = function(c, p1, p2, epsilon) {
         else{
             t1 = t2;
         }
-        t2 = (t1 - t0) * .5 + t0;
+        t2 = (t1 - t0) * 0.5 + t0;
     }
 
     // Failure.
@@ -131,7 +132,7 @@ CubicBezier.prototype._getTForCoordinate = function(c, p1, p2, epsilon) {
  */
 CubicBezier.prototype.getPointForT = function(t) {
     // Special cases: starting and ending points
-    if (t == 0 || t == 1) {
+    if (t === 0 || t === 1) {
         return { x: t, y: t };
     }
     // check for correct t value (must be between 0 and 1)
@@ -141,24 +142,24 @@ CubicBezier.prototype.getPointForT = function(t) {
     }
 
     return {
-        x: this._getCoordinateForT(t, this._p1.x, this._p2.x),
-        y: this._getCoordinateForT(t, this._p1.y, this._p2.y)
+        x: this._getCoordinateForT(t, this._p1x, this._p2x),
+        y: this._getCoordinateForT(t, this._p1y, this._p2y)
     }
 };
 
-CubicBezier.prototype.getTforX = function(x, epsilon){
-    return this._getTForCoordinate(x, this._p1.x, this._p2.x, epsilon);
+CubicBezier.prototype.getTforX = function(x, epsilon) {
+    return this._getTForCoordinate(x, this._p1x, this._p2x, epsilon);
 };
 
-CubicBezier.prototype.getTforY = function(y, epsilon){
-    return this._getTForCoordinate(y, this._p1.y, this._p2.y, epsilon);
+CubicBezier.prototype.getTforY = function(y, epsilon) {
+    return this._getTForCoordinate(y, this._p1y, this._p2y, epsilon);
 };
 
 /**
  * Computes auxiliary points using De Casteljau's algorithm.
  *
  * @param {number} t must be greater than 0 and lower than 1.
- * @returns {Object} with members i0, i1, i2 (first iteration),
+ * @returns {Array} containing i0, i1, i2 (first iteration),
  *     j1, j2 (second iteration) and k (the exact point for t)
  */
 CubicBezier.prototype._getAuxPoints = function(t) {
@@ -166,44 +167,22 @@ CubicBezier.prototype._getAuxPoints = function(t) {
         throw new RangeError("'t' must be greater than 0 and lower than 1");
     }
 
+    var p1x = this._p1x, p1y = this._p1y, p2x = this._p2x, p2y = this._p2y;
+
     // First series of auxiliary points
-    var i0 = { // first control point of the left curve
-            x: t * this._p1.x,
-            y: t * this._p1.y
-        },
-        i1 = {
-            x: this._p1.x + t*(this._p2.x - this._p1.x),
-            y: this._p1.y + t*(this._p2.y - this._p1.y)
-        },
-        i2  = { // second control point of the right curve
-            x: this._p2.x + t*(1 - this._p2.x),
-            y: this._p2.y + t*(1 - this._p2.y)
-        };
+    var i0x = t * p1x, i0y = t * p1y; // first control point of the left curve
+    var i1x = p1x + t*(p2x - p1x), i1y = p1y + t*(p2y - p1y);
+    var i2x = p2x + t*(1 - p2x), i2y = p2y + t*(1 - p2y); // second control point of the right curve
 
     // Second series of auxiliary points
-    var j0 = { // second control point of the left curve
-            x: i0.x + t*(i1.x - i0.x),
-            y: i0.y + t*(i1.y - i0.y)
-        },
-        j1 = { // first control point of the right curve
-            x: i1.x + t*(i2.x - i1.x),
-            y: i1.y + t*(i2.y - i1.y)
-        };
+    var j0x = i0x + t*(i1x - i0x), j0y = i0y + t*(i1y - i0y); // second control point of the left curve
+
+    var j1x = i1x + t*(i2x - i1x), j1y = i1y + t*(i2y - i1y); // first control point of the right curve
 
     // The division point (ending point of left curve, starting point of right curve)
-    var k = {
-            x: j0.x + t*(j1.x - j0.x),
-            y: j0.y + t*(j1.y - j0.y)
-        };
+    var kx = j0x + t*(j1x - j0x), ky = j0y + t*(j1y - j0y);
 
-    return {
-        i0: i0,
-        i1: i1,
-        i2: i2,
-        j0: j0,
-        j1: j1,
-        k: k
-    }
+    return [i0x, i0y, i1x, i1y, i2x, i2y, j0x, j0y, j1x, j1y, kx, ky];
 };
 
 /**
@@ -234,44 +213,20 @@ CubicBezier.prototype.divideAtT = function(t) {
         return curves;
     }
 
-    var left = {},
-        right = {},
-        points = this._getAuxPoints(t);
-
-    var i0 = points.i0,
-        i1 = points.i1,
-        i2 = points.i2,
-        j0 = points.j0,
-        j1 = points.j1,
-        k = points.k;
+    var points = this._getAuxPoints(t);
+    var kx = points[10], ky = points[11];
 
     // Normalize derived points, so that the new curves starting/ending point
     // coordinates are (0, 0) respectively (1, 1)
-    var factorX = k.x,
-        factorY = k.y;
+    var leftP1x = points[0] / kx, leftP1y = points[1] / ky;
+    var leftP2x = points[6] / kx, leftP2y = points[7] / ky;
 
-    left.p1 = {
-        x: i0.x / factorX,
-        y: i0.y / factorY
-    };
-    left.p2 = {
-        x: j0.x / factorX,
-        y: j0.y / factorY
-    };
-
-    right.p1 = {
-        x: (j1.x - factorX) / (1 - factorX),
-        y: (j1.y - factorY) / (1 - factorY)
-    };
-
-    right.p2 = {
-        x: (i2.x - factorX) / (1 - factorX),
-        y: (i2.y - factorY) / (1 - factorY)
-    };
+    var rightP1x = (points[8] - kx) / (1 - kx), rightP1y = (points[9] - ky) / (1 - ky);
+    var rightP2x = (points[4] - kx) / (1 - kx), rightP2y = (points[5] - ky) / (1 - ky);
 
     return [
-        new CubicBezier(left.p1.x, left.p1.y, left.p2.x, left.p2.y),
-        new CubicBezier(right.p1.x, right.p1.y, right.p2.x, right.p2.y)
+        new CubicBezier(leftP1x, leftP1y, leftP2x, leftP2y),
+        new CubicBezier(rightP1x, rightP1y, rightP2x, rightP2y)
     ];
 };
 
@@ -296,15 +251,15 @@ CubicBezier.prototype.divideAtY = function(y, epsilon) {
 };
 
 CubicBezier.prototype.clone = function() {
-    return new CubicBezier(this._p1.x, this._p1.y, this._p2.x, this._p2.y);
+    return new CubicBezier(this._p1x, this._p1y, this._p2x, this._p2y);
 };
 
 CubicBezier.prototype.toString = function() {
     return "cubic-bezier(" + [
-        this._p1.x,
-        this._p1.y,
-        this._p2.x,
-        this._p2.y
+        this._p1x,
+        this._p1y,
+        this._p2x,
+        this._p2y
     ].join(", ") + ")";
 };
 
