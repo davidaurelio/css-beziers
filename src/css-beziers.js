@@ -136,15 +136,15 @@ CubicBezier.prototype.getPointForT = function(t) {
         return { x: t, y: t };
     }
     // check for correct t value (must be between 0 and 1)
-    else if (!(t > 0) || !(t < 1)) {
-        throw new RangeError("'t' must be a number between 0 and 1"
-                             + "Got " + t + " instead.");
+    else if (t < 0 || t > 1) {
+        throw new RangeError("'t' must be a number between 0 and 1" +
+                             "Got " + t + " instead.");
     }
 
     return {
         x: this._getCoordinateForT(t, this._p1x, this._p2x),
         y: this._getCoordinateForT(t, this._p1y, this._p2y)
-    }
+    };
 };
 
 CubicBezier.prototype.getTforX = function(x, epsilon) {
@@ -163,7 +163,7 @@ CubicBezier.prototype.getTforY = function(y, epsilon) {
  *     j1, j2 (second iteration) and k (the exact point for t)
  */
 CubicBezier.prototype._getAuxPoints = function(t) {
-    if (!(t > 0) || !(t < 1)) {
+    if (t <= 0 || t >= 1) {
         throw new RangeError("'t' must be greater than 0 and lower than 1");
     }
 
@@ -200,8 +200,8 @@ CubicBezier.prototype._getAuxPoints = function(t) {
  */
 CubicBezier.prototype.divideAtT = function(t) {
     if (t < 0 || t > 1) {
-        throw new RangeError("'t' must be a number between 0 and 1. "
-                             + "Got " + t + " instead.");
+        throw new RangeError("'t' must be a number between 0 and 1. " +
+                             "Got " + t + " instead.");
     }
 
     // Special cases t = 0, t = 1: Curve can be cloned for one side, the other
@@ -232,8 +232,8 @@ CubicBezier.prototype.divideAtT = function(t) {
 
 CubicBezier.prototype.divideAtX = function(x, epsilon) {
     if (x < 0 || x > 1) {
-        throw new RangeError("'x' must be a number between 0 and 1. "
-                             + "Got " + x + " instead.");
+        throw new RangeError("'x' must be a number between 0 and 1. " +
+                             "Got " + x + " instead.");
     }
 
     var t = this.getTforX(x, epsilon);
@@ -242,8 +242,8 @@ CubicBezier.prototype.divideAtX = function(x, epsilon) {
 
 CubicBezier.prototype.divideAtY = function(y, epsilon) {
     if (y < 0 || y > 1) {
-        throw new RangeError("'y' must be a number between 0 and 1. "
-                             + "Got " + y + " instead.");
+        throw new RangeError("'y' must be a number between 0 and 1. " +
+                             "Got " + y + " instead.");
     }
 
     var t = this.getTforY(y, epsilon);
@@ -264,7 +264,7 @@ CubicBezier.prototype.toString = function() {
 };
 
 CubicBezier.linear = function() {
-    return new CubicBezier
+    return new CubicBezier(0, 0, 1, 1);
 };
 
 CubicBezier.ease = function() {
