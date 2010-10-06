@@ -34,6 +34,8 @@
  * have x and y coordinates between 0 and 1.
  *
  * This type of bezier curves can be used as CSS transform timing functions.
+ *
+ * @constructor
  */
 function CubicBezier(p1x, p1y, p2x, p2y) {
     if (!(p1x >= 0 && p1x <= 1)) {
@@ -261,6 +263,18 @@ CubicBezier.prototype.toString = function() {
         this._p2x,
         this._p2y
     ].join(", ") + ")";
+};
+
+CubicBezier.prototype.getYforX = function(x, epsilon) {
+    var t = this.getTforX(x, epsilon);
+    return this._getCoordinateForT(t, curve._p1y, curve._p2y);
+}
+
+CubicBezier.prototype.getEasingFunction = function(){
+    var curve = this, getYforX = this.getYforX;
+    return function(x, epsilon) {
+        return getYforX.call(curve, x, epsilon || 0.001);
+    };
 };
 
 CubicBezier.linear = function() {
