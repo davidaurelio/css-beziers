@@ -35,22 +35,22 @@
  *
  * This type of bezier curves can be used as CSS transform timing functions.
  */
-function CubicBezier(p1x, p1y, p2x, p2y){
+function CubicBezier(p1x, p1y, p2x, p2y) {
     if (!(p1x >= 0 && p1x <= 1)) {
-        throw new RangeError("'p1x' must be a number between 0 and 1. "
-                               + "Got " + p1x + "instead.");
+        throw new RangeError("'p1x' must be a number between 0 and 1. " +
+                             "Got " + p1x + "instead.");
     }
     if (!(p1y >= 0 && p1y <= 1)) {
-        throw new RangeError("'p1y' must be a number between 0 and 1. "
-                               + "Got " + p1y + "instead.");
+        throw new RangeError("'p1y' must be a number between 0 and 1. " +
+                             "Got " + p1y + "instead.");
     }
     if (!(p2x >= 0 && p2x <= 1)) {
-        throw new RangeError("'p2x' must be a number between 0 and 1. "
-                               + "Got " + p2x + "instead.");
+        throw new RangeError("'p2x' must be a number between 0 and 1. " +
+                             "Got " + p2x + "instead.");
     }
     if (!(p2y >= 0 && p2y <= 1)) {
-        throw new RangeError("'p2y' must be a number between 0 and 1. "
-                               + "Got " + p2y + "instead.");
+        throw new RangeError("'p2y' must be a number between 0 and 1. " +
+                             "Got " + p2y + "instead.");
     }
 
     // Control points
@@ -58,7 +58,7 @@ function CubicBezier(p1x, p1y, p2x, p2y){
     this._p2 = { x: p2x, y: p2y };
 }
 
-CubicBezier.prototype._getCoordinateForT = function(t, p1, p2){
+CubicBezier.prototype._getCoordinateForT = function(t, p1, p2) {
     var c = 3 * p1,
         b = 3 * (p2 - p1) - c,
         a = 1 - c - b;
@@ -66,7 +66,7 @@ CubicBezier.prototype._getCoordinateForT = function(t, p1, p2){
     return ((a * t + b) * t + c) * t;
 };
 
-CubicBezier.prototype._getCoordinateDerivateForT = function(t, p1, p2){
+CubicBezier.prototype._getCoordinateDerivateForT = function(t, p1, p2) {
     var c = 3 * p1,
         b = 3 * (p2 - p1) - c,
         a = 1 - c - b;
@@ -74,7 +74,7 @@ CubicBezier.prototype._getCoordinateDerivateForT = function(t, p1, p2){
     return (3 * a * t + 2 * b) * t + c;
 };
 
-CubicBezier.prototype._getTForCoordinate = function(c, p1, p2, epsilon){
+CubicBezier.prototype._getTForCoordinate = function(c, p1, p2, epsilon) {
     if (!isFinite(epsilon) || epsilon <= 0) {
         throw new RangeError("'epsilon' must be a number greater than 0.");
     }
@@ -82,11 +82,11 @@ CubicBezier.prototype._getTForCoordinate = function(c, p1, p2, epsilon){
     // First try a few iterations of Newton's method -- normally very fast.
     for (var t2 = c, i = 0, c2, d2; i < 8; i++) {
         c2 = this._getCoordinateForT(t2, p1, p2) - c;
-        if (Math.abs(c2) < epsilon){
+        if (Math.abs(c2) < epsilon) {
             return t2;
         }
         d2 = this._getCoordinateDerivateForT(t2, p1, p2);
-        if (Math.abs(d2) < 1e-6){
+        if (Math.abs(d2) < 1e-6) {
             break;
         }
         t2 = t2 - c2 / d2;
@@ -98,19 +98,19 @@ CubicBezier.prototype._getTForCoordinate = function(c, p1, p2, epsilon){
         t1 = 1,
         c2;
 
-    if (t2 < t0){
+    if (t2 < t0) {
         return t0;
     }
-    if (t2 > t1){
+    if (t2 > t1) {
         return t1;
     }
 
     while (t0 < t1) {
         c2 = this._getCoordinateForT(t2, p1, p2);
-        if (Math.abs(c2 - c) < epsilon){
+        if (Math.abs(c2 - c) < epsilon) {
             return t2;
         }
-        if (c > c2){
+        if (c > c2) {
             t0 = t2;
         }
         else{
@@ -161,7 +161,7 @@ CubicBezier.prototype.getTforY = function(y, epsilon){
  * @returns {Object} with members i0, i1, i2 (first iteration),
  *     j1, j2 (second iteration) and k (the exact point for t)
  */
-CubicBezier.prototype._getAuxPoints = function(t){
+CubicBezier.prototype._getAuxPoints = function(t) {
     if (!(t > 0) || !(t < 1)) {
         throw new RangeError("'t' must be greater than 0 and lower than 1");
     }
@@ -219,7 +219,7 @@ CubicBezier.prototype._getAuxPoints = function(t){
  * @returns {CubicBezier[]} Returns an array containing two bezier curves
  *     to the left and the right of t.
  */
-CubicBezier.prototype.divideAtT = function(t){
+CubicBezier.prototype.divideAtT = function(t) {
     if (t < 0 || t > 1) {
         throw new RangeError("'t' must be a number between 0 and 1. "
                              + "Got " + t + " instead.");
@@ -227,7 +227,7 @@ CubicBezier.prototype.divideAtT = function(t){
 
     // Special cases t = 0, t = 1: Curve can be cloned for one side, the other
     // side is a linear curve (with duration 0)
-    if (t === 0 || t === 1){
+    if (t === 0 || t === 1) {
         var curves = [];
         curves[t] = CubicBezier.linear();
         curves[1-t] = this.clone();
@@ -299,7 +299,7 @@ CubicBezier.prototype.clone = function() {
     return new CubicBezier(this._p1.x, this._p1.y, this._p2.x, this._p2.y);
 };
 
-CubicBezier.prototype.toString = function(){
+CubicBezier.prototype.toString = function() {
     return "cubic-bezier(" + [
         this._p1.x,
         this._p1.y,
@@ -308,22 +308,22 @@ CubicBezier.prototype.toString = function(){
     ].join(", ") + ")";
 };
 
-CubicBezier.linear = function(){
+CubicBezier.linear = function() {
     return new CubicBezier
 };
 
-CubicBezier.ease = function(){
+CubicBezier.ease = function() {
     return new CubicBezier(0.25, 0.1, 0.25, 1.0);
 };
-CubicBezier.linear = function(){
+CubicBezier.linear = function() {
     return new CubicBezier(0.0, 0.0, 1.0, 1.0);
 };
-CubicBezier.easeIn = function(){
+CubicBezier.easeIn = function() {
     return new CubicBezier(0.42, 0, 1.0, 1.0);
 };
-CubicBezier.easeOut = function(){
+CubicBezier.easeOut = function() {
     return new CubicBezier(0, 0, 0.58, 1.0);
 };
-CubicBezier.easeInOut = function(){
+CubicBezier.easeInOut = function() {
     return new CubicBezier(0.42, 0, 0.58, 1.0);
 };
